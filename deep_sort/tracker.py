@@ -171,11 +171,15 @@ class Tracker:
             if self.disappearing_box != []:
                 for dis_box in self.disappearing_box:
                     distance = ((dis_box[1][0] - dets_x)**2 + (dis_box[1][1] - dets_y)**2)**0.5
-                    if min(distance) > 100 and dis_box[0] in targets:
+                    if min(distance) > 70 and dis_box[0] in targets:
                         temporary = list(zip(list(targets), list(track_indices)))
                         temporary.pop(list(targets).index(dis_box[0]))
-                        targets, track_indices = zip(*temporary)
-                        targets = np.array(targets)
+                        if temporary != []:
+                            targets, track_indices = zip(*temporary)
+                            targets = np.array(targets)
+                        else:
+                            targets = np.array([])
+                            track_indices = []
             
             cost_matrix = self.metric.distance(features, targets, targets_size)
             cost_matrix = linear_assignment.gate_cost_matrix(
